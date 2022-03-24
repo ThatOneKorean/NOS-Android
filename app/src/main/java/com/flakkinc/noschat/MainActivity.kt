@@ -69,19 +69,19 @@ class MainActivity : AppCompatActivity() {
 
         binding.menuButton.setOnClickListener {view ->
             if(binding.sideNav.visibility == View.VISIBLE) {
-                binding.sideNav.visibility = View.GONE
+                binding.sideNav.visibility = View.INVISIBLE
             } else {
                 binding.sideNav.visibility = View.VISIBLE
-                serverMenu.visibility = View.GONE
+                serverMenu.visibility = View.INVISIBLE
             }
         }
 
         binding.serverButton.setOnClickListener {view ->
             if(serverMenu.visibility == View.VISIBLE) {
-                serverMenu.visibility = View.GONE
+                serverMenu.visibility = View.INVISIBLE
             } else {
                 serverMenu.visibility = View.VISIBLE
-                binding.sideNav.visibility = View.GONE
+                binding.sideNav.visibility = View.INVISIBLE
             }
         }
 
@@ -103,8 +103,6 @@ class MainActivity : AppCompatActivity() {
             builder.setTitle("Are Your Sure You Want To Logout?")
             builder.create().show()
         }
-
-
 
         val imageView = binding.profPic
         val imageURL = user?.photoUrl.toString()

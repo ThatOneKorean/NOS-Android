@@ -1,26 +1,14 @@
 package com.flakkinc.noschat
 
-import android.app.Activity
 import android.content.Intent
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import com.flakkinc.noschat.MainActivity
 import com.flakkinc.noschat.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
-
-import com.flakkinc.noschat.R
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -49,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login(username: String, password: String) {
         auth.signInWithEmailAndPassword(username, password)
-            .addOnCompleteListener() {task ->
+            .addOnCompleteListener {task ->
                 if (task.isSuccessful) {
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 } else {
@@ -57,19 +45,4 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }

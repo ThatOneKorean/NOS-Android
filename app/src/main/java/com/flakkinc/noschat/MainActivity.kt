@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val serverMenu = binding.serverMenu
+        val settingsMenu = binding.SettingsLayout
+        val settingsButton = binding.openSettingsButton
 
         if(user === null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
@@ -102,6 +104,10 @@ class MainActivity : AppCompatActivity() {
             }
             builder.setTitle("Are Your Sure You Want To Logout?")
             builder.create().show()
+        }
+
+        settingsButton.setOnClickListener {view ->
+            settingsMenu
         }
 
         val imageView = binding.profPic

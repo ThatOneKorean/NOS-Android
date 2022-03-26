@@ -10,6 +10,7 @@
         android:id="@+id/MainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:orientation="vertical"
         android:weightSum="2">
 
@@ -51,44 +52,70 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/serverMenu"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom|left"
-                android:layout_weight="1"
-                android:background="#FF7474"
-                android:orientation="vertical"
-                android:visibility="invisible">
+            <ScrollView
+                android:id="@+id/mainDisp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/sideNav"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/openSettingsButton"
+                <LinearLayout
+                    android:id="@+id/lister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Settings" />
+                    android:orientation="vertical" />
+            </ScrollView>
 
-                <Button
-                    android:id="@+id/logoutButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Logout" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ScrollView
+                    android:id="@+id/serverMenuContainer"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#FF7474"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical"
+                    android:verticalScrollbarPosition="left"
+                    android:visibility="invisible">
+
+                    <LinearLayout
+                        android:id="@+id/serverMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
+
+                <LinearLayout
+                    android:id="@+id/sideNav"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#FF7474"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <Button
+                        android:id="@+id/openSettingsButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Settings" />
+
+                    <Button
+                        android:id="@+id/logoutButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Logout" />
+                </LinearLayout>
+
             </LinearLayout>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -98,8 +125,7 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF"
         android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="gone">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,6 +156,11 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/Setting1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>

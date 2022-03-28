@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -98,6 +100,52 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.joinServerButton.setOnClickListener {view ->
+            val builder = AlertDialog.Builder(this)
+
+            val input = EditText(baseContext)
+            input.hint = "Server Code..."
+            input.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView((input))
+
+            builder.apply {
+                setPositiveButton("Join",
+                    DialogInterface.OnClickListener {dialog, id ->
+                        var inputtedId = input.text.toString()
+                        database.child("servers").child(inputtedId).get().addOnSuccessListener {
+                            if(it.exists()) {
+                                database.child("servers").child(inputtedId).child("members").get().addOnSuccessListener { it2 ->
+                                    if(it2.exists()) {
+                                        var data: List<String>? = it2.value as List<String>
+                                        data?.plus(auth.uid)
+                                        database.child("servers").child(inputtedId).child("members").setValue(data)
+                                        database.child("users").child(auth.uid.toString()).child("servers").get().addOnSuccessListener { it3 ->
+                                            if(it3.exists()) {
+                                                var data: List<String>? = it3.value as List<String>
+                                                data?.plus(auth.uid)
+                                                database.child("users").child(auth.uid.toString()).child("servers").setValue(data)
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(baseContext, "Server Id Is Invalid Or Does Not Exist", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                )
+                setNegativeButton("Cancel",
+                    DialogInterface.OnClickListener{dialog, id ->
+
+                    }
+                )
+            }
+            builder.setTitle("Enter Server Id Below To Join")
+            builder.create().show()
+        }
+
         binding.menuButton.setOnClickListener {view ->
             if(sideMenu.visibility == View.VISIBLE) {
                 sideMenu.visibility = View.INVISIBLE
@@ -152,4 +200,4 @@ class MainActivity : AppCompatActivity() {
 }
 
 fun Int.dpToPixels(context: Context):Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics).toInt()
-fun Float.dpToPixels(context: Context):Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics)
+fun Float.dpToPixels(context: Context):Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, context.resources.displayMetrics)

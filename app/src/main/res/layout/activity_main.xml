@@ -73,24 +73,42 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ScrollView
+                <RelativeLayout
                     android:id="@+id/serverMenuContainer"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#FF7474"
-                    android:overScrollMode="always"
-                    android:scrollbarStyle="insideOverlay"
-                    android:scrollbars="vertical"
-                    android:verticalScrollbarPosition="left"
                     android:visibility="invisible">
 
-                    <LinearLayout
-                        android:id="@+id/serverMenu"
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/joinServerButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </ScrollView>
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:clickable="true"
+                        app:srcCompat="@android:drawable/ic_menu_add" />
+
+                    <ScrollView
+                        android:id="@+id/scrollContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#FF7474"
+                        android:overScrollMode="always"
+                        android:scrollbarStyle="insideOverlay"
+                        android:scrollbars="vertical"
+                        android:verticalScrollbarPosition="left"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:id="@+id/serverMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+                    </ScrollView>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/sideNav"

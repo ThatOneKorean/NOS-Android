@@ -127,7 +127,6 @@ class MainActivity : AppCompatActivity() {
 
                                             }
                                         }
-
                                     }
                                 }
                             } else {

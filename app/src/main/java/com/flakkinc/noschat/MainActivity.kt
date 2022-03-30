@@ -19,10 +19,31 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Exclude
+import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.ktx.database
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
+@IgnoreExtraProperties
+data class UserData(
+    val displayName: String = "",
+    val lastServer: String = "",
+    val profPic: String = "",
+    val profPage: Any = {},
+    val servers: List<String> = listOf()
+) {
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "displayName" to displayName,
+            "lastServer" to lastServer,
+            "profPic" to profPic,
+            "profPage" to profPage,
+            "servers" to servers
+        )
+    }
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         val user = auth.currentUser
+        var userData: UserData
 
         database = Firebase.database.reference
 
@@ -51,52 +73,68 @@ class MainActivity : AppCompatActivity() {
         if(user === null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
         } else {
-            database.child("users").child(user.uid).child("servers").get().addOnSuccessListener {
-                if(it.exists()){
-                    var serverIds: List<String>? = it.value as List<String>?
-                    serverIds?.let {
-                        for (id in serverIds) {
-                            database.child("servers").child(id).child("name").get().addOnSuccessListener { it ->
-                                if(it.exists()) {
-                                    var info: String = it.value as String
-                                    val temp = LinearLayout(this)
-                                    temp.orientation = LinearLayout.HORIZONTAL
-                                    var params = RelativeLayout.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.WRAP_CONTENT
-                                    )
-                                    temp.layoutParams = params
+            database.child("users").child(user.uid).get().addOnSuccessListener { it ->
+                if(it.exists()) {
+                    userData = it.getValue(UserData::class.java) as UserData
+                    updateMainDisplay(userData.lastServer)
+                    for (id in userData.servers) {
+                        database.child("servers").child(id).child("name").get().addOnSuccessListener { it1 ->
+                            if(it1.exists()) {
+                                var info: String = it1.value.toString()
+                                val temp = LinearLayout(this)
 
-                                    val serverPicContainer = CardView(this)
+                                temp.orientation = LinearLayout.HORIZONTAL
 
-                                    params = RelativeLayout.LayoutParams(50.dpToPixels(this), 50.dpToPixels(this))
-                                    serverPicContainer.layoutParams = params
-                                    serverPicContainer.radius = 37.5f.dpToPixels(this)
+                                var params = RelativeLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                )
 
-                                    val serverPic = ImageView(this)
+                                temp.layoutParams = params
 
-                                    database.child("servers").child(id).child("serverPic").get().addOnSuccessListener { it2 ->
-                                        if(it2.exists()) {
-                                            Picasso.get().load(it2.value.toString()).into(serverPic)
+                                val serverPicContainer = CardView(this)
+
+                                params = RelativeLayout.LayoutParams(50.dpToPixels(this), 50.dpToPixels(this))
+                                serverPicContainer.layoutParams = params
+                                serverPicContainer.radius = 37.5f.dpToPixels(this)
+
+                                val serverPic = ImageView(this)
+
+                                database.child("servers").child(id).child("serverPic").get().addOnSuccessListener { it2 ->
+                                    if(it2.exists()) {
+                                        Picasso.get().load(it2.value.toString()).into(serverPic)
+                                    }
+                                }
+
+                                serverPicContainer.addView(serverPic)
+                                temp.addView(serverPicContainer)
+
+                                val temp2 = TextView(this)
+                                temp2.text = info
+                                temp.addView(temp2)
+
+                                temp.setOnClickListener { view ->
+                                    database.child("users").child(user.uid).child("lastServer").setValue(id)
+                                    database.child("users").child(user.uid).get().addOnSuccessListener { it ->
+                                        if (it.exists()) {
+                                            userData = it.getValue(UserData::class.java) as UserData
+                                            updateMainDisplay(userData.lastServer)
+                                        } else {
+                                            Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
                                         }
                                     }
-
-                                    serverPicContainer.addView(serverPic)
-                                    temp.addView(serverPicContainer)
-
-                                    val temp2 = TextView(this)
-                                    temp2.text = info
-                                    temp.addView(temp2)
-                                    serverMenu.addView(temp)
                                 }
+
+                                serverMenu.addView(temp)
+
+                            } else {
+                                Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
-
                 } else {
-                    Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, "Unable to fetch User Data. Please Login Again", Toast.LENGTH_SHORT).show()
                 }
-
             }
         }
 
@@ -196,6 +234,22 @@ class MainActivity : AppCompatActivity() {
         val imageURL = user?.photoUrl.toString()
 
         Picasso.get().load(imageURL).into(imageView)
+    }
+
+    private fun updateMainDisplay(id: String) {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val serverMenuContainer = binding.serverMenuContainer
+        val sideMenu = binding.sideNav
+        val mainDisplay = binding.lister
+
+        serverMenuContainer.visibility = View.INVISIBLE
+        sideMenu.visibility = View.INVISIBLE
+
+        val temp = TextView(baseContext)
+        temp.text = id
+        mainDisplay.addView(temp)
     }
 }
 

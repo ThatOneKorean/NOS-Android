@@ -69,20 +69,21 @@ class MainActivity : AppCompatActivity() {
         val settingsMenu = binding.SettingsLayout
         val settingsButton = binding.openSettingsButton
         val closeSettingsButton = binding.closeSettingsMenuButton
-
+        
         if(user === null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
         } else {
             database.child("users").child(user.uid).get().addOnSuccessListener { it ->
                 if(it.exists()) {
                     userData = it.getValue(UserData::class.java) as UserData
-                    updateMainDisplay(userData.lastServer)
+                    
+                    //updateMainDisplay(userData.lastServer)
                     for (id in userData.servers) {
                         database.child("servers").child(id).child("name").get().addOnSuccessListener { it1 ->
                             if(it1.exists()) {
                                 var info: String = it1.value.toString()
                                 val temp = LinearLayout(this)
-
+                                temp.tag = id
                                 temp.orientation = LinearLayout.HORIZONTAL
 
                                 var params = RelativeLayout.LayoutParams(
@@ -113,8 +114,8 @@ class MainActivity : AppCompatActivity() {
                                 temp2.text = info
                                 temp.addView(temp2)
 
-                                temp.setOnClickListener { view ->
-                                    database.child("users").child(user.uid).child("lastServer").setValue(id)
+                                /*temp.setOnClickListener { view ->
+                                    database.child("users").child(user.uid).child("lastServer").setValue(temp.tag)
                                     database.child("users").child(user.uid).get().addOnSuccessListener { it ->
                                         if (it.exists()) {
                                             userData = it.getValue(UserData::class.java) as UserData
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                                             Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
                                         }
                                     }
-                                }
+                                }*/
 
                                 serverMenu.addView(temp)
 
@@ -239,12 +240,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val serverMenuContainer = binding.serverMenuContainer
-        val sideMenu = binding.sideNav
         val mainDisplay = binding.lister
-
-        serverMenuContainer.visibility = View.INVISIBLE
-        sideMenu.visibility = View.INVISIBLE
 
         val temp = TextView(baseContext)
         temp.text = id

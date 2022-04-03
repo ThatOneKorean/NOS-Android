@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                                             temp.text = userData.lastServer
                                             mainDisplay.addView(temp)
                                         } else {
-                                            Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(applicationContext, "ERROR LOL", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }

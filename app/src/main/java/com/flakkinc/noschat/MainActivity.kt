@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         val settingsMenu = binding.SettingsLayout
         val settingsButton = binding.openSettingsButton
         val closeSettingsButton = binding.closeSettingsMenuButton
+
+        val mainDisplay = binding.lister
         
         if(user === null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
@@ -76,8 +78,11 @@ class MainActivity : AppCompatActivity() {
             database.child("users").child(user.uid).get().addOnSuccessListener { it ->
                 if(it.exists()) {
                     userData = it.getValue(UserData::class.java) as UserData
-                    
-                    //updateMainDisplay(userData.lastServer)
+
+                    val temp = TextView(baseContext)
+                    temp.text = userData.lastServer
+                    mainDisplay.addView(temp)
+
                     for (id in userData.servers) {
                         database.child("servers").child(id).child("name").get().addOnSuccessListener { it1 ->
                             if(it1.exists()) {
@@ -114,17 +119,21 @@ class MainActivity : AppCompatActivity() {
                                 temp2.text = info
                                 temp.addView(temp2)
 
-                                /*temp.setOnClickListener { view ->
+                                temp.setOnClickListener { view ->
                                     database.child("users").child(user.uid).child("lastServer").setValue(temp.tag)
                                     database.child("users").child(user.uid).get().addOnSuccessListener { it ->
                                         if (it.exists()) {
                                             userData = it.getValue(UserData::class.java) as UserData
-                                            updateMainDisplay(userData.lastServer)
+
+                                            mainDisplay.removeAllViews()
+                                            val temp = TextView(baseContext)
+                                            temp.text = userData.lastServer
+                                            mainDisplay.addView(temp)
                                         } else {
                                             Toast.makeText(applicationContext, "ERROR", Toast.LENGTH_SHORT).show()
                                         }
                                     }
-                                }*/
+                                }
 
                                 serverMenu.addView(temp)
 
@@ -234,17 +243,6 @@ class MainActivity : AppCompatActivity() {
         val imageURL = user?.photoUrl.toString()
 
         Picasso.get().load(imageURL).into(imageView)
-    }
-
-    private fun updateMainDisplay(id: String) {
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        val mainDisplay = binding.lister
-
-        val temp = TextView(baseContext)
-        temp.text = id
-        mainDisplay.addView(temp)
     }
 }
 

@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
                     val temp = TextView(baseContext)
                     temp.text = userData.lastServer
                     mainDisplay.addView(temp)
-
                     for (id in userData.servers) {
                         database.child("servers").child(id).child("name").get().addOnSuccessListener { it1 ->
                             if(it1.exists()) {
@@ -127,8 +126,10 @@ class MainActivity : AppCompatActivity() {
 
                                             mainDisplay.removeAllViews()
                                             val temp = TextView(baseContext)
-                                            temp.text = userData.lastServer
+                                            temp.text = id
                                             mainDisplay.addView(temp)
+
+                                            serverMenuContainer.visibility = View.INVISIBLE
                                         } else {
                                             Toast.makeText(applicationContext, "ERROR LOL", Toast.LENGTH_SHORT).show()
                                         }
